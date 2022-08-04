@@ -1,0 +1,27 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-chatty-staging-150518-authRole",
+      "UnauthRoleArn": "arn:aws:iam::596514860436:role/amplify-chatty-staging-150518-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::596514860436:role/amplify-chatty-staging-150518-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-chatty-staging-150518-deployment",
+      "UnauthRoleName": "amplify-chatty-staging-150518-unauthRole",
+      "StackName": "amplify-chatty-staging-150518",
+      "StackId": "arn:aws:cloudformation:us-east-1:596514860436:stack/amplify-chatty-staging-150518/85ec8510-1274-11ed-8a81-12de603fe785",
+      "AmplifyAppId": "dgvope08vpgtx",
+      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-chatty-staging-150518-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
+    },
+    "categories": {
+      "auth": {
+        "chatty": {}
+      },
+      "function": {
+        "chattyPostConfirmation": {
+          "deploymentBucketName": "amplify-chatty-staging-150518-deployment",
+          "s3Key": "amplify-builds/chattyPostConfirmation-58706971577144593948-build.zip"
+        }
+      }
+    }
+  }
+}

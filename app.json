@@ -1,5 +1,13 @@
 {
   "expo": {
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ]
+    ],
     "name": "chatty",
     "slug": "chatty",
     "version": "1.0.0",
@@ -29,6 +37,9 @@
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
+    },
+    "packagerOpts": {
+      "config": "metro.config.js"
     }
   }
 }

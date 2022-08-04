@@ -9,22 +9,25 @@ import {
   DarkTheme,
 } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import * as React from "react";
+import React, { useState, useEffect, createContext } from "react";
 import {
   ColorSchemeName,
   View,
   Text,
   Image,
   useWindowDimensions,
+  ActivityIndicator,
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
+
+import { Auth, Hub } from "aws-amplify";
 
 import { RootStackParamList } from "../types";
 import LinkingConfiguration from "./LinkingConfiguration";
 
-import ChatRoomScreen from "../screens/ChatRoomScreen";
-import HomeScreen from "../screens/HomeScreen";
-import { SafeAreaView } from "react-native-safe-area-context";
+import AppStack from "./AppStack";
+import AuthStack from "./AuthStack";
+
+export const UserContext = createContext(null);
 
 export default function Navigation({
   colorScheme,
@@ -41,91 +44,68 @@ export default function Navigation({
   );
 }
 
-const Stack = createStackNavigator<RootStackParamList>();
-
 function RootNavigator() {
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const checkUser = async () => {
+    try {
+      const authUser = await Auth.currentAuthenticatedUser();
+      setUser(authUser);
+    } catch (error) {
+      setUser(null);
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  useEffect(() => {
+    const listener = (data) => {
+      if (data.payload.event === "signIn" || data.payload.event === "signOut")
+        checkUser();
+    };
+
+    Hub.listen("auth", listener);
+
+    return () => Hub.remove("auth", listener);
+  });
+
+  // useEffect(() => {
+  //   async function authUserAsync() {
+  //     Auth.currentAuthenticatedUser({
+  //       bypassCache: true,
+  //     })
+  //       .then((authUser) => {
+  //         setUser(authUser);
+  //         console.log(authUser);
+  //         setIsLoading(false);
+  //       })
+  //       .catch((e) => setUser(null));
+  //   }
+
+  //   authUserAsync();
+  // }, []);
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
   return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{ headerTitle: HomeHeader }}
-      />
-      <Stack.Screen
-        name="ChatRoom"
-        component={ChatRoomScreen}
-        options={{
-          headerTitle: ChatRoomHeader,
-          headerBackTitleVisible: false,
-        }}
-      />
-    </Stack.Navigator>
+    <>
+      {!user ? (
+        <AuthStack />
+      ) : (
+        <UserContext.Provider value={user}>
+          <AppStack />
+        </UserContext.Provider>
+      )}
+    </>
   );
 }
-
-const HomeHeader = (props) => {
-  const { width } = useWindowDimensions();
-
-  return (
-    <View
-      style={{
-        flexDirection: "row",
-        justifyContent: "space-between",
-        width,
-        padding: 10,
-        alignItems: "center",
-      }}
-    >
-      <Image
-        source={{
-          uri: "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/vadim.jpg",
-        }}
-        style={{ width: 30, height: 30, borderRadius: 30 }}
-      />
-      <Text
-        style={{
-          flex: 1,
-          textAlign: "center",
-          // marginLeft: 50,
-          fontWeight: "bold",
-        }}
-      >
-        Chatty
-      </Text>
-      <Feather
-        name="edit-2"
-        size={24}
-        color="black"
-        style={{ marginHorizontal: 20 }}
-      />
-    </View>
-  );
-};
-
-const ChatRoomHeader = (props) => {
-  const { width } = useWindowDimensions();
-  console.log(props);
-
-  return (
-    <View
-      style={{
-        flexDirection: "row",
-        justifyContent: "space-between",
-        width: width - 25,
-        marginLeft: 50,
-        padding: 10,
-        alignItems: "center",
-      }}
-    >
-      <Image
-        source={{
-          uri: "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/vadim.jpg",
-        }}
-        style={{ width: 30, height: 30, borderRadius: 30 }}
-      />
-      <Text style={{ flex: 1, alignItems: "center", fontWeight: "bold" }}>
-        {props.children}
-      </Text>
-    </View>
-  );
-};

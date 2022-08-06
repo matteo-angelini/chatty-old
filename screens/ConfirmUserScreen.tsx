@@ -7,15 +7,16 @@ import InputField from "../components/InputField";
 import { Feather } from "@expo/vector-icons";
 import { Auth } from "aws-amplify";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
 
-const ConfirmUserScreen = ({ navigation }) => {
+const ConfirmUserScreen = () => {
   const [code, setCode] = useState("");
   const [username, setUsername] = useState("");
 
   const confirmSignUp = async () => {
     try {
       await Auth.confirmSignUp(username, code);
-      navigation.navigate("Login");
+      useNavigation().navigate("Login");
     } catch (error) {
       console.log("error confirming sign up", error);
     }

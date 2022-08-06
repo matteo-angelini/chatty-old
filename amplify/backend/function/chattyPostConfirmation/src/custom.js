@@ -7,7 +7,7 @@ exports.handler = async (event) => {
   // save user to DynamoDB
   if (!event?.request.userAttributes?.sub) {
     console.log("No sub provided");
-    return;
+    return null;
   }
 
   const now = new Date();

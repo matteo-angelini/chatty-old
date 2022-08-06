@@ -64,6 +64,8 @@ function RootNavigator() {
 
   useEffect(() => {
     const listener = (data) => {
+      console.log(data.payload.event);
+
       if (data.payload.event === "signIn" || data.payload.event === "signOut")
         checkUser();
     };
@@ -72,22 +74,6 @@ function RootNavigator() {
 
     return () => Hub.remove("auth", listener);
   });
-
-  // useEffect(() => {
-  //   async function authUserAsync() {
-  //     Auth.currentAuthenticatedUser({
-  //       bypassCache: true,
-  //     })
-  //       .then((authUser) => {
-  //         setUser(authUser);
-  //         console.log(authUser);
-  //         setIsLoading(false);
-  //       })
-  //       .catch((e) => setUser(null));
-  //   }
-
-  //   authUserAsync();
-  // }, []);
 
   if (isLoading) {
     return (

@@ -3,7 +3,7 @@
   "cognitoConfig": {
     "identityPoolName": "testAuthIdentityPool",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "chatty9ac86b17",
+    "resourceNameTruncated": "chattya1c91f06",
     "userPoolName": "chatty",
     "autoVerifiedAttributes": [
       "email"
@@ -19,17 +19,15 @@
     "defaultPasswordPolicy": false,
     "passwordPolicyMinLength": 6,
     "passwordPolicyCharacters": [],
-    "requiredAttributes": [
-      "name"
-    ],
+    "requiredAttributes": [],
     "aliasAttributes": [],
     "userpoolClientGenerateSecret": false,
     "userpoolClientRefreshTokenValidity": 30,
     "userpoolClientWriteAttributes": [],
     "userpoolClientReadAttributes": [],
-    "userpoolClientLambdaRole": "chatty9ac86b17_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "chattya1c91f06_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "9ac86b17",
+    "sharedId": "a1c91f06",
     "resourceName": "chatty",
     "authSelections": "identityPoolAndUserPool",
     "serviceName": "Cognito",
@@ -43,41 +41,6 @@
     "thirdPartyAuth": false,
     "authProviders": [],
     "usernameCaseSensitive": false,
-    "useEnabledMfas": true,
-    "authRoleArn": {
-      "Fn::GetAtt": [
-        "AuthRole",
-        "Arn"
-      ]
-    },
-    "unauthRoleArn": {
-      "Fn::GetAtt": [
-        "UnauthRole",
-        "Arn"
-      ]
-    },
-    "breakCircularDependency": true,
-    "dependsOn": [
-      {
-        "category": "function",
-        "resourceName": "chattyPostConfirmation",
-        "triggerProvider": "Cognito",
-        "attributes": [
-          "Arn",
-          "Name"
-        ]
-      }
-    ],
-    "triggers": {
-      "PostConfirmation": [
-        "custom"
-      ]
-    },
-    "hostedUI": false,
-    "parentStack": {
-      "Ref": "AWS::StackId"
-    },
-    "authTriggerConnections": "[\n  {\n    \"triggerType\": \"PostConfirmation\",\n    \"lambdaFunctionName\": \"chattyPostConfirmation\"\n  }\n]",
-    "permissions": []
+    "useEnabledMfas": true
   }
 }

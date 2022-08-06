@@ -19,7 +19,7 @@
       "function": {
         "chattyPostConfirmation": {
           "deploymentBucketName": "amplify-chatty-staging-150518-deployment",
-          "s3Key": "amplify-builds/chattyPostConfirmation-58706971577144593948-build.zip"
+          "s3Key": "amplify-builds/chattyPostConfirmation-765a6669394370446e4d-build.zip"
         }
       }
     }

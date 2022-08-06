@@ -9,7 +9,8 @@ import {
 import { Feather } from "@expo/vector-icons";
 import RegistrationSVG from "../assets/images/register.svg";
 import * as ImagePicker from "expo-image-picker";
-import { Auth, Hub } from "aws-amplify";
+import { Auth, DataStore } from "aws-amplify";
+import { User } from "../src/models";
 
 import InputField from "../components/InputField";
 import CustomButton from "../components/CustomButton";
@@ -18,7 +19,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
-  const [fullName, setFullName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [image, setImage] = useState("");
@@ -33,20 +33,30 @@ const RegisterScreen = ({ navigation }) => {
     }
   };
 
+  const addUserToDB = async (sub, username) => {
+    try {
+      await DataStore.save(
+        new User({
+          sub: sub,
+          name: username,
+          imageUri: image,
+        })
+      );
+    } catch (error) {}
+  };
+
   const signUp = async () => {
     if (password === confirmPassword) {
       try {
-        const { user } = await Auth.signUp({
+        const { user, userSub } = await Auth.signUp({
           username,
           password,
-          attributes: {
-            name: fullName,
-          },
         });
+
+        await addUserToDB(userSub, username);
 
         navigation.navigate("ConfirmUserScreen", {
           navigation,
-          username: user.getUsername(),
         });
       } catch (error) {
         console.log("error signing up:", error);
@@ -107,19 +117,6 @@ const RegisterScreen = ({ navigation }) => {
             textChangedFunction={setEmail}
             inputType="email"
           /> */}
-          <InputField
-            label={"Full Name"}
-            autoCapitalize={"none"}
-            icon={
-              <Feather
-                name="book"
-                size={20}
-                color="#666"
-                style={{ marginRight: 5 }}
-              />
-            }
-            textChangedFunction={setFullName}
-          />
           <InputField
             label={"Password"}
             icon={

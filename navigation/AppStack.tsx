@@ -5,7 +5,9 @@ import { Feather } from "@expo/vector-icons";
 
 import ChatRoomScreen from "../screens/ChatRoomScreen";
 import HomeScreen from "../screens/HomeScreen";
+import ContactsScreen from "../screens/ContactsScreen";
 import { Auth } from "aws-amplify";
+import { useNavigation } from "@react-navigation/native";
 
 const Stack = createStackNavigator();
 
@@ -24,6 +26,11 @@ const AppStack = () => {
           headerTitle: ChatRoomHeader,
           headerBackTitleVisible: false,
         }}
+      />
+      <Stack.Screen
+        name="ContactsScreen"
+        component={ContactsScreen}
+        options={{ headerTitle: "Contacts" }}
       />
     </Stack.Navigator>
   );
@@ -58,6 +65,13 @@ const HomeHeader = (props) => {
       >
         Chatty
       </Text>
+      <Feather
+        name="user-plus"
+        size={24}
+        color="black"
+        style={{ marginHorizontal: 20 }}
+        onPress={() => useNavigation().navigate("ContactsScreen")}
+      />
       <Feather
         name="log-out"
         size={24}

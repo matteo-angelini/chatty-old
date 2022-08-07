@@ -64,8 +64,6 @@ function RootNavigator() {
 
   useEffect(() => {
     const listener = (data) => {
-      console.log(data.payload.event);
-
       if (data.payload.event === "signIn" || data.payload.event === "signOut")
         checkUser();
     };

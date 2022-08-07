@@ -1,13 +1,34 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useState, useEffect, useContext } from "react";
+import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { DataStore } from "@aws-amplify/datastore";
+import { User } from "../../src/models";
+import { UserContext } from "../../navigation";
 
 const violet = "#703DFE";
 const grey = "white";
 
-const myID = "u1";
-
 const Message = ({ message }) => {
-  const isMe = message.user.id === myID;
+  const authUser = useContext(UserContext);
+  const [user, setUser] = useState<User | undefined>();
+  const [isMe, setIsMe] = useState<boolean>(false);
+
+  useEffect(() => {
+    DataStore.query(User, message.userID).then(setUser);
+  }, []);
+
+  useEffect(() => {
+    const checkIfMe = async () => {
+      if (!user) {
+        return;
+      }
+      setIsMe(user.id === authUser.attributes.sub);
+    };
+    checkIfMe();
+  }, [user]);
+
+  if (!user) {
+    return <ActivityIndicator />;
+  }
 
   return (
     <View

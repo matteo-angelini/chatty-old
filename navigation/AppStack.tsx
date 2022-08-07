@@ -38,6 +38,7 @@ const AppStack = () => {
 
 const HomeHeader = (props) => {
   const { width } = useWindowDimensions();
+  const navigation = useNavigation();
 
   return (
     <View
@@ -70,7 +71,7 @@ const HomeHeader = (props) => {
         size={24}
         color="black"
         style={{ marginHorizontal: 20 }}
-        onPress={() => useNavigation().navigate("ContactsScreen")}
+        onPress={() => navigation.navigate("ContactsScreen")}
       />
       <Feather
         name="log-out"
@@ -85,7 +86,6 @@ const HomeHeader = (props) => {
 
 const ChatRoomHeader = (props) => {
   const { width } = useWindowDimensions();
-  console.log(props);
 
   return (
     <View

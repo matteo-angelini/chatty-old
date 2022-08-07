@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   View,
   Text,
@@ -15,15 +15,34 @@ import {
   AntDesign,
   Ionicons,
 } from "@expo/vector-icons";
+import { DataStore } from "@aws-amplify/datastore";
+import { ChatRoom, Message } from "../../src/models";
+import { UserContext } from "../../navigation";
 
-const MessageInput = () => {
+const MessageInput = ({ chatRoom }) => {
   const [message, setMessage] = useState("");
+  const authUser = useContext(UserContext);
 
-  const sendMessage = () => {
-    // send message
-    console.warn("sending: ", message);
+  const sendMessage = async () => {
+    const newMessage = await DataStore.save(
+      new Message({
+        content: message,
+        userID: authUser.attributes.sub,
+        chatroomID: chatRoom.id,
+      })
+    );
+
+    updateLastMessage(newMessage);
 
     setMessage("");
+  };
+
+  const updateLastMessage = async (newMessage) => {
+    DataStore.save(
+      ChatRoom.copyOf(chatRoom, (updatedChatRoom) => {
+        updatedChatRoom.LastMessage = newMessage;
+      })
+    );
   };
 
   const onPlusClicked = () => {

@@ -27,7 +27,6 @@ const LoginScreen = ({ navigation }) => {
       const user = await Auth.signIn(username, password);
       console.log("User sign in");
     } catch (error) {
-      console.log(error);
       setErrorText(error);
       setModalVisible(true);
     }

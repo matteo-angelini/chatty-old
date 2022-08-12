@@ -3,12 +3,7 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    paddingHorizontal: 10,
-    paddingVertical: 20,
-    marginHorizontal: 20,
-    marginVertical: 10,
-    borderRadius: 10,
-    backgroundColor: '#FFFFFF'
+    padding: 10,
   },
   image: {
     height: 50,
@@ -17,7 +12,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   badgeContainer: {
-    backgroundColor: '#703DFE',
+    backgroundColor: '#3777f0',
     width: 20,
     height: 20,
     borderRadius: 10,

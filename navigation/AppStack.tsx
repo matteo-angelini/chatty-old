@@ -1,13 +1,21 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { View, Text, Image, useWindowDimensions } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  useWindowDimensions,
+  Pressable,
+} from "react-native";
 import { Feather } from "@expo/vector-icons";
 
 import ChatRoomScreen from "../screens/ChatRoomScreen";
 import HomeScreen from "../screens/HomeScreen";
-import ContactsScreen from "../screens/ContactsScreen";
-import { Auth } from "aws-amplify";
+import UsersScreen from "../screens/UsersScreen";
 import { useNavigation } from "@react-navigation/native";
+import GroupInfoScreen from "../screens/GroupInfoScreen";
+import SettingsScreen from "../screens/Settings";
+import ChatRoomHeader from "./ChatRoomHeader";
 
 const Stack = createStackNavigator();
 
@@ -22,16 +30,18 @@ const AppStack = () => {
       <Stack.Screen
         name="ChatRoom"
         component={ChatRoomScreen}
-        options={{
-          headerTitle: ChatRoomHeader,
+        options={({ route }) => ({
+          headerTitle: () => <ChatRoomHeader id={route.params?.id} />,
           headerBackTitleVisible: false,
-        }}
+        })}
       />
+      <Stack.Screen name="GroupInfoScreen" component={GroupInfoScreen} />
       <Stack.Screen
-        name="ContactsScreen"
-        component={ContactsScreen}
+        name="UsersScreen"
+        component={UsersScreen}
         options={{ headerTitle: "Contacts" }}
       />
+      <Stack.Screen name="Settings" component={SettingsScreen} />
     </Stack.Navigator>
   );
 };
@@ -66,57 +76,23 @@ const HomeHeader = (props) => {
       >
         Chatty
       </Text>
+      <Pressable onPress={() => navigation.navigate("Settings")}>
+        <Feather
+          name="settings"
+          size={24}
+          color="black"
+          style={{ marginHorizontal: 10 }}
+        />
+      </Pressable>
       <Feather
         name="user-plus"
         size={24}
         color="black"
         style={{ marginHorizontal: 20 }}
-        onPress={() => navigation.navigate("ContactsScreen")}
-      />
-      <Feather
-        name="log-out"
-        size={24}
-        color="black"
-        style={{ marginHorizontal: 20 }}
-        onPress={signOut}
+        onPress={() => navigation.navigate("UsersScreen")}
       />
     </View>
   );
-};
-
-const ChatRoomHeader = (props) => {
-  const { width } = useWindowDimensions();
-
-  return (
-    <View
-      style={{
-        flexDirection: "row",
-        justifyContent: "space-between",
-        width: width - 25,
-        marginLeft: 50,
-        padding: 10,
-        alignItems: "center",
-      }}
-    >
-      <Image
-        source={{
-          uri: "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/vadim.jpg",
-        }}
-        style={{ width: 30, height: 30, borderRadius: 30 }}
-      />
-      <Text style={{ flex: 1, alignItems: "center", fontWeight: "bold" }}>
-        {props.children}
-      </Text>
-    </View>
-  );
-};
-
-const signOut = async () => {
-  try {
-    await Auth.signOut();
-  } catch (error) {
-    console.log(error);
-  }
 };
 
 export default AppStack;

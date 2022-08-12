@@ -7,16 +7,19 @@ import {
   SafeAreaView,
   ActivityIndicator,
 } from "react-native";
-import { useRoute, useNavigation } from "@react-navigation/core";
-import Message from "../components/Message";
-import MessageInput from "../components/MessageInput";
+import { useRoute } from "@react-navigation/core";
 import { DataStore } from "@aws-amplify/datastore";
 import { ChatRoom, Message as MessageModel } from "../src/models";
-import { SortDirection } from "aws-amplify";
+import Message from "../components/Message";
+import MessageInput from "../components/MessageInput";
+import { Auth, SortDirection } from "aws-amplify";
 import { UserContext } from "../navigation";
 
-export default function ChatRoomScreen({ navigation }) {
+export default function ChatRoomScreen() {
   const [messages, setMessages] = useState<MessageModel[]>([]);
+  const [messageReplyTo, setMessageReplyTo] = useState<MessageModel | null>(
+    null
+  );
   const [chatRoom, setChatRoom] = useState<ChatRoom | null>(null);
   const authUser = useContext(UserContext);
 
@@ -45,10 +48,17 @@ export default function ChatRoomScreen({ navigation }) {
       console.warn("No chatroom id provided");
       return;
     }
-    const chatRoom = await DataStore.query(ChatRoom, route.params.id);
+
+    const chatRoom: ChatRoom = await DataStore.query(ChatRoom, (c) =>
+      c.id("eq", route.params.id)
+    );
+
     if (!chatRoom) {
       console.error("Couldn't find a chat room with this id");
+    } else if (chatRoom.id === undefined) {
+      return;
     } else {
+      console.log(chatRoom);
       setChatRoom(chatRoom);
     }
   };
@@ -57,21 +67,18 @@ export default function ChatRoomScreen({ navigation }) {
     if (!chatRoom) {
       return;
     }
+    const myId = authUser.attributes.sub;
+
     const fetchedMessages = await DataStore.query(
       MessageModel,
-      (message) => message.chatroomID("eq", chatRoom?.id),
+      (message) => message.chatroomID("eq", chatRoom?.id).forUserId("eq", myId),
       {
         sort: (message) => message.createdAt(SortDirection.DESCENDING),
       }
     );
+
     setMessages(fetchedMessages);
   };
-
-  // navigation.setOptions({
-  //   title: chatRoom.Users.filter(
-  //     (uc) => uc.user.sub !== authUser.attributes.sub
-  //   ).map((uc) => uc.user.name),
-  // });
 
   if (!chatRoom) {
     return <ActivityIndicator />;
@@ -81,17 +88,26 @@ export default function ChatRoomScreen({ navigation }) {
     <SafeAreaView style={styles.page}>
       <FlatList
         data={messages}
-        renderItem={({ item }) => <Message message={item} />}
-        // inverted
+        renderItem={({ item }) => (
+          <Message
+            message={item}
+            setAsMessageReply={() => setMessageReplyTo(item)}
+          />
+        )}
+        inverted
       />
-      <MessageInput chatRoom={chatRoom} />
+      <MessageInput
+        chatRoom={chatRoom}
+        messageReplyTo={messageReplyTo}
+        removeMessageReplyTo={() => setMessageReplyTo(null)}
+      />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   page: {
-    backgroundColor: "#FAFAFA",
+    backgroundColor: "white",
     flex: 1,
   },
 });

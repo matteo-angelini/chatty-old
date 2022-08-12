@@ -1,0 +1,14 @@
+{
+  "resourceName": "chattyStorage",
+  "policyUUID": "2e9f5393",
+  "bucketName": "chatty3a9ff94365354b378f58ece20dd54051",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}

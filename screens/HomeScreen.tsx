@@ -1,22 +1,22 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 
-import { Text, Image, View, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
 import { Auth, DataStore } from "aws-amplify";
 import { ChatRoom, ChatRoomUser } from "../src/models";
 import ChatRoomItem from "../components/ChatRoomItem";
-import { UserContext } from "../navigation";
 
 export default function TabOneScreen() {
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
-  const authUser = useContext(UserContext);
 
   useEffect(() => {
     const fetchChatRooms = async () => {
+      const userData = await Auth.currentAuthenticatedUser();
+
       const chatRooms = (await DataStore.query(ChatRoomUser))
         .filter(
-          (chatRoomUser) => chatRoomUser?.user?.sub === authUser.attributes.sub
+          (chatRoomUser) => chatRoomUser?.user?.sub === userData.attributes.sub
         )
-        .map((chatRoomUser) => chatRoomUser.chatRoom);
+        .map((chatRoomUser) => chatRoomUser.chatroom);
 
       setChatRooms(chatRooms);
     };
@@ -36,7 +36,7 @@ export default function TabOneScreen() {
 
 const styles = StyleSheet.create({
   page: {
-    backgroundColor: "#F6F6F6",
+    backgroundColor: "white",
     flex: 1,
   },
 });

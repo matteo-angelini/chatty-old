@@ -8,23 +8,12 @@ import {
   DefaultTheme,
   DarkTheme,
 } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
 import React, { useState, useEffect, createContext } from "react";
-import {
-  ColorSchemeName,
-  View,
-  Text,
-  Image,
-  useWindowDimensions,
-  ActivityIndicator,
-} from "react-native";
+import { ColorSchemeName, View, ActivityIndicator } from "react-native";
 
 import { Auth, Hub } from "aws-amplify";
 
-import { RootStackParamList } from "../types";
-import LinkingConfiguration from "./LinkingConfiguration";
-
-import AppStack from "./AppStack";
+import AppStack, { navigationRef } from "./AppStack";
 import AuthStack from "./AuthStack";
 
 export const UserContext = createContext(null);
@@ -36,8 +25,8 @@ export default function Navigation({
 }) {
   return (
     <NavigationContainer
-      linking={LinkingConfiguration}
       theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+      ref={navigationRef}
     >
       <RootNavigator />
     </NavigationContainer>
@@ -46,11 +35,13 @@ export default function Navigation({
 
 function RootNavigator() {
   const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const checkUser = async () => {
     try {
-      const authUser = await Auth.currentAuthenticatedUser();
+      const authUser = await Auth.currentAuthenticatedUser({
+        bypassCache: true,
+      });
       setUser(authUser);
     } catch (error) {
       setUser(null);

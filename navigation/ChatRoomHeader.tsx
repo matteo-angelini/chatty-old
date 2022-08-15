@@ -24,7 +24,7 @@ const ChatRoomHeader = ({ id }) => {
 
   const fetchUsers = async () => {
     const fetchedUsers = (await DataStore.query(ChatRoomUser))
-      .filter((chatRoomUser) => chatRoomUser.chatroom.id === id)
+      .filter((chatRoomUser) => chatRoomUser.chatRoom.id === id)
       .map((chatRoomUser) => chatRoomUser.user);
 
     setAllUsers(fetchedUsers);

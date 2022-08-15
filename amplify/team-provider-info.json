@@ -9,8 +9,7 @@
       "UnauthRoleName": "amplify-chatty-staging-150518-unauthRole",
       "StackName": "amplify-chatty-staging-150518",
       "StackId": "arn:aws:cloudformation:us-east-1:596514860436:stack/amplify-chatty-staging-150518/85ec8510-1274-11ed-8a81-12de603fe785",
-      "AmplifyAppId": "dgvope08vpgtx",
-      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-chatty-staging-150518-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
+      "AmplifyAppId": "dgvope08vpgtx"
     },
     "categories": {
       "auth": {

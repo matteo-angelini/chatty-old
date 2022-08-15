@@ -23,22 +23,22 @@ export default function UsersScreen() {
   const authUser = useContext(UserContext);
 
   const navigation = useNavigation();
+  /* const [dbUser, setDbUser] = useState<User>(); */
+
+  /* useEffect(() => { */
+  /*   DataStore.query(User, (u) => u.sub("eq", authUser.attributes.sub))[0].then( */
+  /*     setDbUser */
+  /*   ); */
+  /* }, []); */
 
   useEffect(() => {
     DataStore.query(User).then(setUsers);
   }, []);
 
-  const addUserToChatRoom = async (user, chatroom) => {
-    console.log("USER:\n" + user.id);
-    console.log("CHATROOM:\n" + chatroom.id);
-
+  const addUserToChatRoom = async (user: User, chatroom: ChatRoom) => {
     const test: ChatRoomUser = await DataStore.save(
-      new ChatRoomUser({ user, chatroom })
+      new ChatRoomUser({ user, chatRoom: chatroom })
     );
-    console.log("TEST\n");
-    console.log("TEST id:\n" + test.id);
-    console.log("TEST user:\n" + test.user.id);
-    console.log("TEST chatroom:\n" + test.chatRoom.id);
   };
 
   const createChatRoom = async (users) => {
@@ -47,13 +47,18 @@ export default function UsersScreen() {
     // otherwise, create a new chatroom with these users.
 
     // connect authenticated user with the chat room
-    const dbUser: User = await DataStore.query(User, (u) =>
+    const data = await DataStore.query(User, (u) =>
       u.sub("eq", authUser.attributes.sub)
     );
+
+    if (!data) return;
+
+    const dbUser: User = data[0];
+
     if (!dbUser) {
       Alert.alert("There was an error creating the group");
       return;
-    } else if (dbUser.id === undefined) return;
+    }
     // Create a chat room
     const newChatRoomData = {
       newMessages: 0,
@@ -67,12 +72,6 @@ export default function UsersScreen() {
     const newChatRoom = await DataStore.save(new ChatRoom(newChatRoomData));
 
     if (dbUser) {
-      console.log("sub " + authUser.attributes.sub);
-      console.log("dbUser " + dbUser.id);
-      console.log("dbUser " + dbUser.name);
-      console.log("dbUser " + dbUser.sub);
-      console.log("dbUser " + dbUser.updatedAt);
-      console.log("users " + users[0]);
       await addUserToChatRoom(dbUser, newChatRoom);
     }
 

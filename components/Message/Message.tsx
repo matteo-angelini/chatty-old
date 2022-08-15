@@ -47,7 +47,14 @@ const Message = (props) => {
   const { showActionSheetWithOptions } = useActionSheet();
 
   useEffect(() => {
-    DataStore.query(User, message.userID).then(setUser);
+    const getUser = async () => {
+      console.log(message.userID);
+      const usr: User = await DataStore.query(User, message.userID);
+      setUser(usr);
+      console.log(user);
+    };
+
+    getUser();
   }, []);
 
   useEffect(() => {
@@ -111,6 +118,7 @@ const Message = (props) => {
       // decrypt message.content
       const sharedKey = box.before(stringToUint8Array(user.publicKey), myKey);
       console.log("sharedKey", sharedKey);
+      console.log("MESSAGE " + message.content);
       const decrypted = decrypt(sharedKey, message.content);
       console.log("decrypted", decrypted);
       setDecryptedContent(decrypted.message);

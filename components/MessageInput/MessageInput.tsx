@@ -18,7 +18,7 @@ import {
   Ionicons,
 } from "@expo/vector-icons";
 import { DataStore } from "@aws-amplify/datastore";
-import { ChatRoom, Message } from "../../src/models";
+import { ChatRoom, Message, User } from "../../src/models";
 import { Auth, Storage } from "aws-amplify";
 import EmojiSelector from "react-native-emoji-selector";
 import * as ImagePicker from "expo-image-picker";
@@ -105,15 +105,20 @@ const MessageInput = ({ chatRoom, messageReplyTo, removeMessageReplyTo }) => {
   const sendMessage = async () => {
     // get all the users of this chatroom
     const users = (await DataStore.query(ChatRoomUser))
-      .filter((cru) => cru.chatroom.id === chatRoom.id)
+      .filter((cru) => cru.chatRoom.id === chatRoom.id)
       .map((cru) => cru.user);
 
     console.log("users", users);
 
-    // for each user, encrypt the `content` with his public key, and save it as a new message
-    await Promise.all(
-      users.map((user) => sendMessageToUser(user, authUser.attributes.sub))
+    const dbUserData: User[] = await DataStore.query(User, (u) =>
+      u.sub("eq", authUser.attributes.sub)
     );
+    const dbUser: User = dbUserData[0];
+
+    if (!dbUser) return;
+
+    // for each user, encrypt the `content` with his public key, and save it as a new message
+    await Promise.all(users.map((user) => sendMessageToUser(user, dbUser.id)));
 
     resetFields();
   };

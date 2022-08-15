@@ -14,6 +14,7 @@ import Message from "../components/Message";
 import MessageInput from "../components/MessageInput";
 import { Auth, SortDirection } from "aws-amplify";
 import { UserContext } from "../navigation";
+import { User } from "../src/models";
 
 export default function ChatRoomScreen() {
   const [messages, setMessages] = useState<MessageModel[]>([]);
@@ -49,13 +50,17 @@ export default function ChatRoomScreen() {
       return;
     }
 
-    const chatRoom: ChatRoom = await DataStore.query(ChatRoom, (c) =>
-      c.id("eq", route.params.id)
+    console.log("param " + route.params?.id);
+    const chatRoom: ChatRoom = await DataStore.query(
+      ChatRoom,
+      route.params?.id
     );
 
     if (!chatRoom) {
       console.error("Couldn't find a chat room with this id");
     } else if (chatRoom.id === undefined) {
+      console.log(chatRoom.name);
+      console.log(chatRoom.createdAt);
       return;
     } else {
       console.log(chatRoom);
@@ -67,7 +72,15 @@ export default function ChatRoomScreen() {
     if (!chatRoom) {
       return;
     }
-    const myId = authUser.attributes.sub;
+
+    const dbUserData: User[] = await DataStore.query(User, (u) =>
+      u.sub("eq", authUser.attributes.sub)
+    );
+    const dbUser: User = dbUserData[0];
+
+    if (!dbUser) return;
+
+    const myId = dbUser.id;
 
     const fetchedMessages = await DataStore.query(
       MessageModel,
